@@ -300,7 +300,7 @@ EXTERN_C LOGGER_API LPCTSTR    ILogger_GetErrorDesc    (ILogger::ErrorCode ec);
 
 ----
 
-==CStaticLogger：ILogger 包装器（智能指针）—— 用于静态加载 Logger DLL ==
+==CStaticLogger：ILogger 包装器（智能指针）—— 用于静态加载 Logger DLL==
 
 {{{
 #pragma once
@@ -337,7 +337,7 @@ private:
 
 ----
 
-==CStaticLogger：ILogger 包装器（智能指针）—— 用于静态加载 Logger DLL ==
+==CDynamicLogger：ILogger 包装器（智能指针）—— 用于动态加载 Logger DLL==
 
 {{{
 #pragma once
