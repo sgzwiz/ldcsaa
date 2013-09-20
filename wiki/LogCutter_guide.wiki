@@ -1,6 +1,7 @@
 #labels Phase-Support,Phase-QA,Featured
 =Log-Cutter=
 
+http://bcs.duapp.com/jessma/blog/201306/Project-Log-Cutter.png
  * 支持 Linux、Mac 和 Windows 等所有常见操作系统平台
  * 支持命令行交互式运行
  * 支持后台非交互式运行（Linux/MAC 下使用 daemon 进程实现，Windows 用系统 Service 实现）
