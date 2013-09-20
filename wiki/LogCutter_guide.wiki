@@ -155,12 +155,12 @@
 ==run.bat（Windows 平台）==
 {{{
 @ECHO OFF
-set JAVA_HOME="C:\Program Files\Java\jdk1.7.0_17"
+set JAVA_HOME="C:\Program Files\Java\jre6"
 set CLASSPATH=%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar
 set JAVA_BIN=%JAVA_HOME%\bin
 set JAVA=%JAVA_BIN%\java
 
-set APP_PATH="X:\Server\log-cutter-2.0.1"
+set APP_PATH="D:\Server\log-cutter-2.0.1"
 set APP_CLASSPATH=%APP_PATH%\classes
 set APP_LIBPATH=%APP_PATH%\lib
 set APP_CONFPATH=%APP_PATH%\conf
@@ -172,7 +172,7 @@ set APP_MAIN_CLASS=org.jessma.logcutter.main.LogCutter
 %JAVA% -Duser.dir=%APP_PATH% -Djava.ext.dirs=%APP_LIBPATH% -cp %CLASSPATH%;%APP_CLASSPATH% %APP_MAIN_CLASS% -f "%APP_CONFFILE%"
 }}}
 
-==run.sh（Mac OS X 平台）==
+==run.sh（Unix/Linux 平台）==
 {{{
 #!/bin/bash
 
@@ -205,8 +205,126 @@ fi
 
 ----
 
-==交互式运行操作演示==
+==交互式操作演示（Windows 平台）==
 
 {{{
+C:\>D:\Server\log-cutter-2.0.1\bin\run.bat
 
+command line usage
+------------------------------------------------------------
+    HELP : Show help
+    JOBS : Show jobs status
+     CFG : Show configuration summary
+     RUN : Schedule jobs manually
+      !Q : Shutdown application
+       ? : About me
+------------------------------------------------------------
+> help
+command line usage
+------------------------------------------------------------
+    HELP : Show help
+    JOBS : Show jobs status
+     CFG : Show configuration summary
+     RUN : Schedule jobs manually
+      !Q : Shutdown application
+       ? : About me
+------------------------------------------------------------
+> jobs
+jobs summary (total: 3, active: 0)
+------------------------------------------------------------
+    1. DelFileRunner@16399041                     [  Idle  ]
+    2. CutFileRunner@2583282                      [  Idle  ]
+    3. ArcFileRunner@31342381                     [  Idle  ]
+------------------------------------------------------------
+> cfg
+configuration summary
+------------------------------------------------------------
+[global]
+    start-check-delay : 726   minutes
+       check-interval : 4320  minutes
+    log4j-config-file : /D:/Server/log-cutter-2.0.1/classes/../conf/log4j.properties
+            lock-file : /D:/Server/log-cutter-2.0.1/classes/../LogCutter.lock
+[delete-files] (expire: 30 days)
+    1. D:\LogCutter\logs\LogCutter.log*
+    2. D:\hMailServer\Logs\*.log
+    3. D:\Tomcat 6.0\logs\*.log
+[delete-files] (expire: 365 days)
+    4. E:\backup\*
+[cut-files] (threshold: 10240 KBs, reserve: 512 KBs)
+    1. D:\Apache-2.2\logs\*.log
+    2. D:\MySQL Server 5.1\data\*.err
+[archive-files] (expire: 120 days, archive-path: 'E:\backup')
+    1. D:\MySQL Server 5.1\data\mysql-bin.*
+------------------------------------------------------------
+> run
+manual jobs are scheduled !
+> ?
+LogCutter 2.0.1 - JessMA Open Source, all rights reserved.
+------------------------------------------------------------
+    Description : schedule to DELETE, CUT and ARCHIVE text log files automatically or manually.
+        Support : GB18030, UTF-8, UTF-16LE and UTF-16BE text file types.
+          Usage : java org.jessma.logcutter.main.LogCutter [ -f <config-file> ]
+                  (default config file is '/D:/Server/log-cutter-2.0.1/classes/../conf/config.xml')
+------------------------------------------------------------
+> !q
+be about to shutdown, please wait ...
+shutdown perfectly !
+
+C:\>
+}}}
+
+==后台运行演示（Mac OS X 平台）==
+
+{{{
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ pwd
+/opt/Server/log-cutter-2.0.1
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ ./bin/run.sh -d
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+LogCutter is running in background, use 'kill 4544' to stop me.
+
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ kill 4544
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+!! LogCutter received terminate signal !!
+be about to shutdown, please wait ...
+shutdown perfectly !
+
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+}}}
+
+----
+
+
+==执行日志==
+
+{{{
+14:24:55,687  INFO [main]: ->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->->
+14:24:55,687  INFO [main]: starting: class org.jessma.logcutter.main.LogCutter ...
+14:24:55,689  INFO [main]: configuration summary 
+------------------------------------------------------------
+[global]
+    start-check-delay : 726   minutes
+       check-interval : 4320  minutes
+    log4j-config-file : /D:/Server/log-cutter-2.0.1/classes/../conf/log4j.properties
+            lock-file : /D:/Server/log-cutter-2.0.1/classes/../LogCutter.lock
+[delete-files] (expire: 30 days)
+    1. D:\LogCutter\logs\LogCutter.log*
+    2. D:\hMailServer\Logs\*.log
+    3. D:\Tomcat 6.0\logs\*.log
+[delete-files] (expire: 365 days)
+    4. E:\backup\*
+[cut-files] (threshold: 10240 KBs, reserve: 512 KBs)
+    1. D:\Apache-2.2\logs\*.log
+    2. D:\MySQL Server 5.1\data\*.err
+[archive-files] (expire: 120 days, archive-path: 'E:\backup')
+    1. D:\MySQL Server 5.1\data\mysql-bin.*
+------------------------------------------------------------
+14:26:22,867  INFO [pool-1-thread-1]: - - - - - - - -> start DelFileRunner <- - - - - - - -
+14:26:22,867  INFO [pool-1-thread-2]: - - - - - - - -> start CutFileRunner <- - - - - - - -
+14:26:22,867  INFO [pool-1-thread-2]: - - - - - - - ->   end CutFileRunner <- - - - - - - -
+14:26:22,867  INFO [pool-1-thread-1]: - - - - - - - ->   end DelFileRunner <- - - - - - - -
+14:26:22,868  INFO [pool-1-thread-2]: - - - - - - - -> start ArcFileRunner <- - - - - - - -
+14:26:22,868  INFO [pool-1-thread-2]: - - - - - - - ->   end ArcFileRunner <- - - - - - - -
+14:26:31,229  INFO [main]: stoping: class org.jessma.logcutter.main.LogCutter ...
+14:26:31,229  INFO [main]: <-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-<-
 }}}
