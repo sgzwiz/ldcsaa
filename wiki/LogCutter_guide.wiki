@@ -45,14 +45,14 @@ http://bcs.duapp.com/jessma/blog/201306/Project-Log-Cutter.png
 1) Windows
 	A) 前台运行: > run.bat [ -f config-file ]
 	
-	B) 后台运行: > LogCutter.exe{	
-							-install-demand  (安装手动启动服务)
-							-install-auto    (安装自动启动服务)
-							-uninstall       (删除服务)
-							-start           (启动服务)
-							-stop            (停止服务)
-							-status          (查看服务状态)
-						}
+	B) 后台运行: > LogCutter.exe	{	
+						-install-demand  (安装手动启动服务)
+						-install-auto    (安装自动启动服务)
+						-uninstall       (删除服务)
+						-start           (启动服务)
+						-stop            (停止服务)
+						-status          (查看服务状态)
+					    }
 
 	*** 注 *** 
 		@ LogCutter.exe 以 Windows 系统服务的方式运行，安装好后也可以通过 Windows 服务管理器进行管理
@@ -161,51 +161,82 @@ http://bcs.duapp.com/jessma/blog/201306/Project-Log-Cutter.png
 ==run.bat（Windows 平台）==
 {{{
 @ECHO OFF
-set JAVA_HOME="C:\Program Files\Java\jre6"
-set CLASSPATH=%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\lib\tools.jar
-set JAVA_BIN=%JAVA_HOME%\bin
-set JAVA=%JAVA_BIN%\java
 
-set APP_PATH="D:\Server\log-cutter-2.0.1"
+echo.
+
+if "%JRE_HOME%" == "" goto :use_jdk
+	set _JAVA_HOME="%JRE_HOME%"
+	echo Using  JRE_HOME : %_JAVA_HOME%
+	goto :set_classpath
+	
+:use_jdk
+set _JAVA_HOME="%JAVA_HOME%"
+echo Using JAVA_HOME : %_JAVA_HOME%
+
+:set_classpath
+set _CLASSPATH="%CLASSPATH%"
+echo Using CLASSPATH : %_CLASSPATH%
+
+set _JAVA=%_JAVA_HOME%\bin\java
+
+set APP_PATH="%~dp0.."
 set APP_CLASSPATH=%APP_PATH%\classes
 set APP_LIBPATH=%APP_PATH%\lib
-set APP_CONFPATH=%APP_PATH%\conf
-set APP_CONFFILE=%APP_CONFPATH%\config.xml
 set APP_MAIN_CLASS=org.jessma.logcutter.main.LogCutter
 
 @ECHO ON
 
-%JAVA% -Duser.dir=%APP_PATH% -Djava.ext.dirs=%APP_LIBPATH% -cp %CLASSPATH%;%APP_CLASSPATH% %APP_MAIN_CLASS% -f "%APP_CONFFILE%"
+%_JAVA% -Duser.dir=%APP_PATH% -Djava.ext.dirs=%APP_LIBPATH% -cp %APP_CLASSPATH%;%_CLASSPATH% %APP_MAIN_CLASS% %*
 }}}
 
 ==run.sh（Unix/Linux 平台）==
 {{{
 #!/bin/bash
 
-JAVA_HOME="/Library/Java/Home"
-CLASSPATH=$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
-JAVA_BIN=$JAVA_HOME/bin
-JAVA=$JAVA_BIN/java
+echo
 
-APP_PATH="/opt/Server/log-cutter-2.0.1"
+if [ "$JRE_HOME" != "" ]
+then
+    _JAVA_HOME="$JRE_HOME"
+    echo Using  JRE_HOME : $_JAVA_HOME
+else
+    _JAVA_HOME="$JAVA_HOME"
+    echo Using JAVA_HOME : $_JAVA_HOME
+fi
+
+_CLASSPATH="$CLASSPATH"
+echo Using CLASSPATH : $_CLASSPATH
+
+_JAVA=$_JAVA_HOME/bin/java
+
+APP_PATH="$(cd "$(dirname "$0")" && pwd)/.."
 APP_CLASSPATH=$APP_PATH/classes
 APP_LIBPATH=$APP_PATH/lib
-APP_CONFPATH=$APP_PATH/conf
-APP_CONFFILE=$APP_CONFPATH/config.xml
 APP_MAIN_CLASS=org.jessma.logcutter.main.LogCutter
 
-DAEMON='-d'
-CMD="$JAVA -Duser.dir=$APP_PATH -Djava.ext.dirs=$APP_LIBPATH -cp $CLASSPATH:$APP_CLASSPATH $APP_MAIN_CLASS -f $APP_CONFFILE"
+ARGS=
+DAEMON='false'
+CMD="$_JAVA -Duser.dir=$APP_PATH -Djava.ext.dirs=$APP_LIBPATH -cp $APP_CLASSPATH:$_CLASSPATH $APP_MAIN_CLASS"
 
-if [ $# -eq 0 ]
+echo
+
+while (( $# > 0 ))
+do
+    if [ "$1" == '-d' ]
+    then
+        DAEMON='true'
+    else
+        ARGS="$ARGS $1"
+    fi
+    
+    shift
+done
+
+if [ "$DAEMON" == 'false' ]
 then
-    $CMD
-elif [ "$#" -eq 1 -a "$1" = "$DAEMON" ]
-then
-    $CMD &
+    $CMD $ARGS
 else
-    echo "Usage: $0 [ $DAEMON ]"
-    exit 1
+    $CMD $ARGS &
 fi
 }}}
 
@@ -214,7 +245,10 @@ fi
 ==交互式操作演示（Windows 平台）==
 
 {{{
-C:\>D:\Server\log-cutter-2.0.1\bin\run.bat
+C:\>D:\Server\log-cutter\bin\run.bat
+
+Using JAVA_HOME : "C:\Program Files\Java\JDK-1.7.0_21"
+Using CLASSPATH : "C:\Program Files\Java\JDK-1.7.0_21\lib\dt.jar"
 
 command line usage
 ------------------------------------------------------------
@@ -282,20 +316,35 @@ C:\>
 ==后台运行演示（Mac OS X 平台）==
 
 {{{
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ pwd
-/opt/Server/log-cutter-2.0.1
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ ./bin/run.sh -d
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ /opt/log-cutter/bin/run.sh -d
+
+Using JAVA_HOME : /Library/Java/Home
+Using CLASSPATH : /Library/Java/Home/lib/dt.jar
+
+[Kingfisher@Bruce-mbp ~] $ 
 LogCutter is running in background, use 'kill 4544' to stop me.
 
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ kill 4544
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+[Kingfisher@Bruce-mbp ~] $ kill 4544
+[Kingfisher@Bruce-mbp ~] $ 
 !! LogCutter received terminate signal !!
 be about to shutdown, please wait ...
 shutdown perfectly !
 
-[Kingfisher@Bruce-mbp log-cutter-2.0.1] $ 
+[Kingfisher@Bruce-mbp ~] $ 
+}}}
+
+==单次运行演示（Mac OS X 平台）==
+
+{{{
+[Kingfisher@Bruce-mbp ~] $ /opt/log-cutter/bin/run.sh -1
+
+Using JAVA_HOME : /Library/Java/Home
+Using CLASSPATH : /Library/Java/Home/lib/dt.jar
+
+(running-only-once mode)
+be about to shutdown, please wait ...
+shutdown perfectly !
+[Kingfisher@Bruce-mbp ~] $
 }}}
 
 ----
