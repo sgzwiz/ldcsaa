@@ -184,6 +184,8 @@ set APP_CLASSPATH=%APP_PATH%\classes
 set APP_LIBPATH=%APP_PATH%\lib
 set APP_MAIN_CLASS=org.jessma.logcutter.main.LogCutter
 
+echo.
+
 @ECHO ON
 
 %_JAVA% -Duser.dir=%APP_PATH% -Djava.ext.dirs=%APP_LIBPATH% -cp %APP_CLASSPATH%;%_CLASSPATH% %APP_MAIN_CLASS% %*
