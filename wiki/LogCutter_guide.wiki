@@ -28,8 +28,8 @@ http://bcs.duapp.com/jessma/blog/201306/Project-Log-Cutter.png
 --------------------------------------------------
 1) 程序配置文件: conf/config.xml (默认)
 	（示例参考：conf/config-template.xml）
-2) 日志配置文件: conf/log4j.properties (默认)
-	（示例请参考：conf/log4j.properties）
+2) 日志配置文件: conf/log4j2.xml (默认)
+	（示例请参考：conf/log4j2.xml）
 --------------------------------------------------
 
 三、安装部署
