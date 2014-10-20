@@ -66,7 +66,9 @@ http://bcs.duapp.com/jessma/blog/201306/Project-Log-Cutter.png
 	C) 单次运行: $ run.sh -1 [ -f config-file ] [ -d ]
 
 	*** 注 ***
-		@ 可以把 run.sh 启动命令加入 /etc/rc.d/rc.local 中，从而设置为开机时自动运行			
+	  @ 可以把 run.sh 启动命令加入 /etc/rc.d/rc.local 中，从而设置为开机时自动运行
+	  @ 可以把 run.sh -1 放入 CronTab 中定期执行，并且不用常驻内存，如：
+	    ## 30 2 * * 2,4,6 root /usr/local/LogCutter/bin/run.sh -1 > /dev/null
 --------------------------------------------------
 }}}
 
